@@ -1,0 +1,9 @@
+{
+	"ImportPath": "scaling-demo",
+	"GoVersion": "go1.11",
+	"GodepVersion": "v80",
+	"Packages": [
+		"pkg/..."
+	],
+	"Deps": []
+}

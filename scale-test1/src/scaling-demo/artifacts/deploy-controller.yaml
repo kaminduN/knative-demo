@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yolo-controller
+  namespace: knative-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yolo-controller
+  template:
+    metadata:
+      labels:
+        app: yolo-controller
+    spec:
+      containers:
+      - image: gcr.io/msc-project-246617/scaling-demo-32ceef502f7fe50c62e9c0062b42143c@sha256:123361b36554c5ba9c0fc736d7a54f36622fe2d656e1a960f794672119df819b
+        name: yolo
+      serviceAccountName: controller
+
+---

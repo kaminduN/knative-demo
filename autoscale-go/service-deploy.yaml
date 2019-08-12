@@ -1,0 +1,47 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: app
+  namespace: default
+spec:
+  # release:
+    # revisions:
+      # - autoscale-go-jpjh7
+    # rolloutPercent: 0
+  runLatest:
+    configuration:
+      revisionTemplate:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/class:  "yolo"
+            # Knative concurrency-based autoscaling (default).
+            # autoscaling.knative.dev/class:  kpa.autoscaling.knative.dev
+            # autoscaling.knative.dev/metric: concurrency
+            # # Target 10 in-flight-requests per pod.
+            # autoscaling.knative.dev/target: "6"
+
+            # Standard Kubernetes CPU-based autoscaling.
+            # autoscaling.knative.dev/class:  hpa.autoscaling.knative.dev
+            # autoscaling.knative.dev/metric: cpu
+            # # CPU percentage target
+            # autoscaling.knative.dev/target: "60"
+
+            # autoscaling.knative.dev/metric: concurrency
+            # Target 10 in-flight-requests per pod.
+            # autoscaling.knative.dev/target: "6"
+
+            # Limit scaling to 15 pods.
+            # autoscaling.knative.dev/maxScale: '15'
+            # autoscaling.knative.dev/minScale: "1"
+            # Disable scale to zero with a minScale of 1.
+            # autoscaling.knative.dev/minScale: '0'
+        spec:
+          container:
+            image: gcr.io/knative-samples/autoscale-go:0.1
+            # resources:
+            #   limits:
+            #     memory: "256Mi"
+            #     # cpu: "600m"
+            env:
+            - name: VERSION
+              value: "Hello serverless2"

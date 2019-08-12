@@ -1,0 +1,23 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: app
+  namespace: kubecon-seattle-2018
+spec:
+  # release:
+  #   revisions:
+  #     - app-00001
+  #   rolloutPercent: 0
+  runLatest:
+    configuration:
+      revisionTemplate:
+        metadata:
+          annotations:
+            # autoscaling.knative.dev/minScale: "1"
+            autoscaling.knative.dev/class:  "yolo.autoscaling"
+        spec:
+          container:
+            image: gcr.io/knative-samples/autoscale-go:0.1
+            env:
+            - name: VERSION
+              value: "Hello msc"
