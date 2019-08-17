@@ -209,7 +209,7 @@ func (c *Controller) processNextWorkItem() bool {
 func recommendedScale(pa *v1alpha1.PodAutoscaler) int32 {
 
 	// Do something really smart here ...
-	return 2
+	return 1
 }
 
 // syncHandler compares the actual state with the desired, and attempts to
@@ -315,18 +315,27 @@ func (c *Controller) updatePodAutoscalerStatus(podAutoscaler *autoscalingv1alpha
 	// You can use DeepCopy() to make a deep copy of original object and modify this copy
 	// Or create a copy manually for better performance
 	podAutoscalerCopy := podAutoscaler.DeepCopy()
-	podAutoscalerCopy.Status.MarkActive()
-	podAutoscalerCopy.Status.SetConditions(duck.Conditions{{
-		Type:   duck.ConditionReady,
-		Status: corev1.ConditionTrue,
-		Reason: "I was born ready",
-	}})
+
+	if deployment.Status.AvailableReplicas < 1 {
+		podAutoscalerCopy.Status.MarkActivating(
+			"Queued", "Resources are provisioning..")
+	} else {
+		podAutoscalerCopy.Status.MarkActive()
+		podAutoscalerCopy.Status.SetConditions(duck.Conditions{{
+			Type:   duck.ConditionReady,
+			Status: corev1.ConditionTrue,
+			Reason: "I was born ready too",
+		}})
+	}
+
+	log.Printf("AvailableReplicas in Deployment %v", deployment.Status.AvailableReplicas)
+
 	// podAutoscalerCopy.Status.AvailableReplicas = deployment.Status.AvailableReplicas
 	// If the CustomResourceSubresources feature gate is not enabled,
 	// we must use Update instead of UpdateStatus to update the Status block of the PodAutoscaler resource.
 	// UpdateStatus will not allow changes to the Spec of the resource,
 	// which is ideal for ensuring nothing other than resource status has been updated.
-	_, err := c.autoscalingclientset.AutoscalingV1alpha1().PodAutoscalers(podAutoscaler.Namespace).Update(podAutoscalerCopy)
+	_, err := c.autoscalingclientset.AutoscalingV1alpha1().PodAutoscalers(podAutoscaler.Namespace).UpdateStatus(podAutoscalerCopy)
 	return err
 	// return nil
 }

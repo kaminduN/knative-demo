@@ -136,7 +136,7 @@ func updateStatus(oldPa *v1alpha1.PodAutoscaler, replicas int32) {
 		existing.Status = pa.Status
 		log.Printf("xxxx auoscale old %v", oldPa)
 		log.Printf("xxxx auoscale update %v", pa)
-		if out, err := autoscalingClient.AutoscalingV1alpha1().PodAutoscalers(pa.Namespace).Update(pa); err != nil {
+		if out, err := autoscalingClient.AutoscalingV1alpha1().PodAutoscalers(pa.Namespace).UpdateStatus(pa); err != nil {
 			log.Printf("Error updating PodAutoscaler %q: %v.", pa.Name, err)
 		} else {
 			log.Printf("updating PodAutoscaler %q: %v.", pa.Name, out)
