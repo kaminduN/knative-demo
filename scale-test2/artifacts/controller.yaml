@@ -1,19 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-controller
+  name: yolo-controller
   namespace: knative-serving
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-controller
+      app: yolo-controller
   template:
     metadata:
       labels:
-        app: app-controller
+        app: yolo-controller
     spec:
       serviceAccountName: controller
       containers:
-      - name: app
+      - name: yolo
         image: scaling-demo
+      - name: predict
+        image: gcr.io/project/metric-processer@latest
